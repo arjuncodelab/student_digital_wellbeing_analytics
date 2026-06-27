@@ -1,10 +1,10 @@
 ## Student Wellbeing & Digital Behavior Analysis
 #### Project Goal
-In an era of increasing digital consumption, how does "Doom-Scrolling" affect the academic success of students globally? I designed a relational database to audit 50,000+ student records, identifying the tipping point where digital addiction leads to academic failure.
+In an era of increasing digital consumption, how does "Doom-Scrolling" affect the academic success of students globally? I designed a relational database to audit 360K+ student records, identifying the tipping point where digital addiction leads to academic failure.
 
 #### The Architecture: : [Dataset](https://www.kaggle.com/datasets/ea5e73b3f8466a5cedaf3eaf45e5453cf91ab78cf77f12a7ed68ae829c14f402)
 - **Normalization**: 01_schema_design.sql
-Transformed a flat 'Mixed' dataset into a relational schema (Students, Countries).
+Transformed a flat 'Mixed' dataset into a relational schema (Students, Countries, family_income, Device_access, Education_level, Field_of_study.).
 
 - **Data Integrity**: 02_data_etl.sql
 Implemented strict CHECK constraints and Foreign Key relationships to ensure zero data leakage.
@@ -14,22 +14,22 @@ Implemented strict CHECK constraints and Foreign Key relationships to ensure zer
 #### Key Findings
 - **Wellbeing Tipping Point** | _Goal_: Identify if there is a 'cliff' where internet usage destroys wellbeing.
 - **Insight**: Students with 3 hours of daily internet access report the highest wellbeing scores (63.1), representing optimal digital health. However, as usage increases, wellbeing deteriorates steadily:
+
   Safe Zone 3 hours/day -> Wellbeing: 63.1
 
-  Optimal Zone 4.5 hours/day -> Wellbeing: 58.88
+  Warning Zone 4.7 hours/day -> Wellbeing: 57.34
 
-  Warning Zone 5.5 hours/day -> Wellbeing: 55.64
+  Danger Zone 6.73 hours/day -> Wellbeing: 52.38 | Critical threshold
 
-  Danger Zone 7 hours/day -> Wellbeing: 51.38 | Critical threshold
-
-Beyond 7 hours, students experience a 10-point wellbeing decline from the optimal range. This suggests a "danger zone" where excessive screen time becomes psychologically destructive.
+Beyond 6.7 hours (7 h aprox), students experience a 10-point wellbeing decline from the optimal range. This suggests a "danger zone" where excessive screen time becomes psychologically destructive.
 
 
-- **Brain Rot Productivity Tax** | _Goal_: Do students with above-average 'Brain Rot' scores perform worse?
+- **Brain Rot Productivity Tax** | _Goal_: Do students with Higher 'Brain Rot' scores have lower Productivity?
 
-**Insight**: Students with above-average brain rot scores show a 12% productivity decline:
-  - Below-average brain rot (11.75) :- Productivity: 9.43 
-  - Above-average brain rot (26.14) :- Productivity: 8.29 
+**Insight**: Students with above-average brain rot scores show a 12% productivity decline: (Lower = Better)
+  - With Lower Brain Rot **9.22** out of 60 :- Have Productivity of **9.57** Out of 10.
+  - With Moderate Brain Rot **18.14** out of 60 :- Have Productivity **8.29** Out of 10.
+  - With Higher Brain Rot **29.80** out of 60:- Have Productivity of **7.94
 
 Students in the high brain rot group score up to Max of 59 out of 60, indicating severe digital addiction patterns. Even among high-attendance students (>80%), this cognitive deterioration remains consistent, suggesting brain rot is independent of effort and attendance—it's about quality of focus, not quantity of time spent.
 
