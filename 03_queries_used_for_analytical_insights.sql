@@ -1,3 +1,4 @@
+
 -- Q1 Wellbeing Tipping point
 -- Goal: Identify if there is a 'cliff' where internet usage destroys wellbeing.
 WITH q AS (
@@ -15,145 +16,229 @@ SELECT
   WHEN percentile_rank <= 0.75 THEN 'High'
   WHEN percentile_rank <= 1.0 THEN 'Max'
   END as 'Quartile',
-  ROUND(AVG(wellbeing_index),2) AS avg_wellbeing,
-  ROUND(AVG(internet_access_hours),2) as avg_internet_access_hour
+  ROUND(AVG(internet_access_hours),2) as avg_internet_access_hour,
+  ROUND(AVG(wellbeing_index),2) AS avg_wellbeing
   FROM q
   GROUP BY Quartile
   ORDER BY avg_internet_access_hour DESC, avg_wellbeing DESC
 ;
+
 -- Q2 Brain Rot Productive Tax
--- Goal: Do students with above average 'Brain Rot' scores actually perform worse?
+-- Goal: Do students with above average 'Brain Rot' scores (out of 60) actually perform worse?
 WITH students_filtered AS (
-  SELECT student_id, brain_rot_index, productivity_score, class_attendance_rate
+  SELECT student_id,
+  PERCENT_RANK() OVER(ORDER BY brain_rot_index) as quantile
   FROM students
-  WHERE brain_rot_index IS NOT NULL
-    AND class_attendance_rate > 80
-),
-avg_brain AS (
-  SELECT AVG(brain_rot_index) AS avg_brain_rot
-  FROM students_filtered
 )
 SELECT
-  CASE WHEN s.brain_rot_index > a.avg_brain_rot THEN 'above_avg_brain_rot'
-  ELSE "below_or_equal_avg_brain_rot"
+  CASE
+    WHEN s.quantile >= 0.66 THEN 'High_brain_rot'
+    WHEN s.quantile < 0.66 AND s.quantile >= 0.33 THEN 'Moderate_brain_rot'
+    ELSE "Low_brain_rot"
   END AS brain_rot_group,
-  ROUND(AVG(s.productivity_score),2) AS avg_productivity,
-  ROUND(AVG(s.brain_rot_index), 2) as avg_brain_rot,
-  MAX(s.brain_rot_index) as max_brain_rot,
-  MIN(s.brain_rot_index) as min_brain_rot
+  ROUND(AVG(st.productivity_score),2) AS avg_productivity,
+  ROUND(AVG(st.brain_rot_index), 2) as avg_brain_rot,
+  MAX(st.brain_rot_index) as max_brain_rot,
+  MIN(st.brain_rot_index) as min_brain_rot
 FROM students_filtered s
-CROSS JOIN avg_brain a
-GROUP BY brain_rot_group;
+JOIN students st ON s.student_id = st.student_id
+GROUP BY brain_rot_group
+ORDER BY avg_productivity DESC, avg_brain_rot DESC;
+
 
 -- Q3 Behavioral Spending
 -- Goal: Is ads_clickeding a stronger driver of spending than family income?
-SELECT
- family_income_level,
- CASE
-  WHEN ads_clicked_per_week > 10 THEN 'High'
-  WHEN ads_clicked_per_week > 3 THEN 'Moderate'
- ELSE 'Low'
- END AS ad_engagement,
- ROUND(AVG(ads_clicked_per_week),2) AS avg_ads_click_per_week,
- ROUND(AVG(digital_spending_per_month),2) AS avg_digital_spending_per_month,
- ROUND(AVG(impulse_purchase_score), 2) AS avg_impulse_score
-from students group by family_income_level, ad_engagement
-ORDER BY avg_ads_click_per_week DESC, avg_digital_spending_per_month DESC;
-
----- Q4 Infrastructure ROI
--- Goal: Does better internet speed actually result in higher academic motivation?
-WITH stats AS (
+WITH average_cte AS (
     SELECT
-      CASE
-       WHEN s.academic_motivation > (SELECT AVG(academic_motivation) FROM students)
-         THEN 'High_performing_students'
-       WHEN s.academic_motivation < (SELECT AVG(academic_motivation) FROM students)
-         THEN 'Low_performing_students'
-       ELSE 'moderate_performing_students'
-    END as performance,
-    c.internet_infrastructure_index,
-    ROUND(AVG(s.academic_motivation),2) AS counrty_avg_academic_motivation,
-    COUNT(*) AS sample_size
-    FROM students s
-    JOIN countries c ON s.country_id = c.country_id
-    GROUP BY c.country_id
+    student_id,
+    PERCENT_RANK() OVER (ORDER BY ads_clicked_per_week) as percentile
+    FROM students
 )
 SELECT
- internet_infrastructure_index,
- performance,
- counrty_avg_academic_motivation,
- sample_size
-FROM stats
-WHERE internet_infrastructure_index > 40
-ORDER BY internet_infrastructure_index DESC, performance;
+ f.family_income,
+ CASE
+  WHEN ac.percentile >= 0.6666 THEN 'High'
+  WHEN ac.percentile >= 0.3333 AND ac.percentile < 0.6666 THEN 'Moderate'
+ ELSE 'Low'
+ END AS ad_engagement,
+ ROUND(AVG(s.ads_clicked_per_week),2) AS avg_ads_click_per_week,
+ ROUND(AVG(s.digital_spending_per_month),2) AS avg_digital_spending_per_month,
+ ROUND(AVG(s.impulse_purchase_score), 2) AS avg_impulse_score
+FROM students s
+JOIN average_cte ac ON s.student_id = ac.student_id
+JOIN family_income f ON s.family_income_id = f.family_income_id
+GROUP BY f.family_income, ad_engagement
+ORDER BY avg_ads_click_per_week DESC, avg_digital_spending_per_month DESC;
+
+
+-- Q4 Infrastructure ROI
+-- Goal: Does better internet speed actually result in higher academic motivation? -Yes
+WITH percentile_academic_motivation AS (
+    SELECT
+      student_id,
+      country_id,
+      PERCENT_RANK() OVER (ORDER BY academic_motivation) as percentile_academic_motivation
+    FROM students
+),
+percentile_internet_infra AS(
+    SELECT
+        country_id,
+        country,
+        PERCENT_RANK() OVER(ORDER BY internet_infrastructure_index) AS percentile_internet_infra,
+        internet_infrastructure_index
+    FROM countries
+)
+SELECT
+    pc.country,
+    pc.internet_infrastructure_index,
+    SUM(CASE WHEN pa.percentile_academic_motivation >= 0.66
+         THEN 1 ELSE 0 END) AS High_perform_students,
+    SUM(CASE WHEN pa.percentile_academic_motivation >= 0.33 AND pa.percentile_academic_motivation < 0.66
+         THEN 1 ELSE 0 END) AS Moderate_perform_students,
+    SUM(CASE WHEN pa.percentile_academic_motivation < 0.33
+         THEN 1 ELSE 0 END) AS Low_perform_students
+FROM percentile_academic_motivation pa
+JOIN percentile_internet_infra pc ON pa.country_id = pc.country_id
+GROUP BY pc.country, pc.internet_infrastructure_index
+ORDER BY High_perform_students DESC, Moderate_perform_students DESC, Low_perform_students DESC;
+
+
+-- Yes better infrastructure lead to Not just better academic performance but better productivity too
+
+WITH percentile_productivity_score AS (
+    SELECT
+      student_id,
+      country_id,
+      PERCENT_RANK() OVER (ORDER BY productivity_score) as percentile_productivity_score
+    FROM students
+),
+percentile_internet_infra AS(
+    SELECT
+        country_id,
+        country,
+        PERCENT_RANK() OVER(ORDER BY internet_infrastructure_index) AS percentile_internet_infra,
+        internet_infrastructure_index
+    FROM countries
+)
+SELECT
+    pc.country,
+    pc.internet_infrastructure_index,
+    SUM(CASE WHEN pa.percentile_productivity_score >= 0.66
+         THEN 1 ELSE 0 END) AS High_productivity_score,
+    SUM(CASE WHEN pa.percentile_productivity_score >= 0.33 AND pa.percentile_productivity_score < 0.66
+         THEN 1 ELSE 0 END) AS Moderate_productivity_score,
+    SUM(CASE WHEN pa.percentile_productivity_score < 0.33
+         THEN 1 ELSE 0 END) AS Low_productivity_score
+FROM percentile_productivity_score pa
+JOIN percentile_internet_infra pc ON pa.country_id = pc.country_id
+GROUP BY pc.country, pc.internet_infrastructure_index
+ORDER BY High_productivity_score DESC, Moderate_productivity_score DESC, Low_productivity_score DESC;
+
+
 
 -- Q5 Doom Scrolling By Major
 -- Goal: Which fields of study are most "addicted" to short-form content?
 SELECT
- field_of_study,
- ROUND(AVG(short_video_hours) / NULLIF(AVG(internet_access_hours),0), 2) as 'doom_scorll'
- FROM students
- WHERE field_of_study != 'None' AND field_of_study IS NOT NULL
- GROUP BY field_of_study
+ sf.field_of_study,
+ ROUND(SUM(s.short_video_hours) / NULLIF(SUM(s.internet_access_hours),0), 2) as 'doom_scorll'
+ FROM students s
+ JOIN study_field sf
+ WHERE sf.field_of_study != 'NA'
+ GROUP BY sf.field_of_study
  ORDER BY doom_scorll DESC;
+
 
 -- Q6 Multi_factor Academic_risk.
 -- Goal: Identify the volume of studnets meeting the 'Triple Threat"
 -- Criteria: High Late Night usage, Low attendance and High Anxiety.
-SELECT
-    CASE
-        WHEN late_night_score >= 3 AND class_attendance_rate < 70 AND anxiety_score > 7 THEN 'High_Risk'
-        ELSE 'Standard_Risk'
-        END as 'Risk_assesment',
-        ROUND(AVG(anxiety_score),2) AS avg_anxiety,
-        ROUND(AVG(late_night_score),2) AS avg_late_night_score,
-        ROUND(AVG(class_attendance_rate),2) AS avg_class_attendance_rate
-        FROM students
-        WHERE anxiety_score IS NOT NULL OR
-         class_attendance_rate IS NOT NULL OR
-         late_night_score IS NOT NULL
-        GROUP BY Risk_assesment;
-
--- Q7 Economic_resilience
--- Goal: Compare how family income affects wellbeing across different country development levels.
-WITH wellbeing_status AS(
+WITH CTE AS (
     SELECT
-     s.wellbeing_index,
-     c.development_level,
-     s.family_income_level
-    FROM students s
-    JOIN countries c ON s.country_id = c.country_id
-    WHERE
-    s.family_income_level IS NOT NULL
+        student_id,
+        PERCENT_RANK() OVER(ORDER BY class_attendance_rate) AS 'percentile_attendance',
+        PERCENT_RANK() OVER(ORDER BY anxiety_score) AS 'percentile_anxiety_score'
+    FROM students
 )
 SELECT
- development_level, family_income_level,
+    CASE
+        WHEN s.late_night_score >= 2 AND c.percentile_attendance <= 0.66 AND c.percentile_anxiety_score >= 0.5
+            THEN 'High_Risk'
+        WHEN c.percentile_attendance > 0.66 AND c.percentile_anxiety_score < 0.5 THEN 'Lower Risk'
+        ELSE 'Standard_Risk'
+    END as 'Risk_assesment',
+        ROUND(AVG(s.brain_rot_index),2) as avg_brain_rot,
+        ROUND(AVG(s.anxiety_score),2) AS avg_anxiety,
+        ROUND(AVG(s.late_night_score),2) AS avg_late_night_score,
+        ROUND(AVG(s.class_attendance_rate),2) AS avg_class_attendance_rate
+        FROM students s
+        JOIN CTE c ON s.student_id = c.student_id
+        GROUP BY Risk_assesment;
+
+-- -- Q7 Economic_resilience
+-- -- Goal: Compare how family income affects wellbeing across different country development levels.
+
+SELECT
+ d.development_level,
  CASE
-  WHEN family_income_level = 'High' THEN wellbeing_index
-  WHEN family_income_level = 'Low' THEN wellbeing_index
-  WHEN family_income_level = 'Middle' THEN wellbeing_index
-  END AS  'Economic_resilience',
-  ROUND(AVG(wellbeing_index),2) AS 'avg_wellbeing',
-  COUNT(*) AS 'sample_size'
-FROM wellbeing_status
-GROUP BY development_level,family_income_level
-ORDER BY development_level;
+    WHEN f.family_income = 'High' THEN 'High_income'
+    WHEN f.family_income = 'Low' THEN 'Low_income'
+    WHEN f.family_income = 'Middle' THEN 'Middle_income'
+ END AS family_income,
+ ROUND(AVG(s.wellbeing_index),2) AS avg_wellbeing_score,
+ COUNT(s.student_id) AS size
+FROM students s
+JOIN countries c ON s.country_id = c.country_id
+JOIN development d ON c.development_id = d.development_id
+JOIN family_income f ON s.family_income_id = f.family_income_id
+GROUP BY d.development_level,family_income
+ORDER BY d.development_level;
+
 
 -- Q8 Device Access Parity
 -- Goal: Measure the Academic Risk differene between students
-SELECT device_access,
- ROUND(AVG(academic_risk_score),2) as 'Risk_assessment',
- ROUND(AVG(productivity_score), 2) as 'avg_productiviy'
-  FROM students
-  GROUP BY device_access;
+WITH cte AS (
+    SELECT
+    s.student_id,
+    PERCENT_RANK() OVER(ORDER BY s.academic_risk_score) AS percentile_academic_risk,
+    PERCENT_RANK() OVER(ORDER BY s.productivity_score) AS percentile_productivity_score
+    FROM students s
+)
+SELECT d.device_access,
+ CASE
+    WHEN c.percentile_academic_risk > 0.66 THEN 'high'
+    WHEN c.percentile_academic_risk <= 0.66 AND c.percentile_academic_risk > 0.33
+        THEN 'Moderate'
+    ELSE 'Low'
+    END AS Risk_assessment,
+ ROUND(AVG(s.brain_rot_index), 2) as avg_brain_rot,
+ ROUND(AVG(s.productivity_score), 2) as avg_productiviy
+FROM students s
+JOIN device_access d ON s.device_id = d.device_id
+JOIN cte c ON s.student_id = c.student_id
+GROUP BY d.device_access, Risk_assessment
+ORDER BY avg_productiviy DESC;
+
+
 -- Q9 Digital Addiction Recovery, The Gold Standard Student
 -- Goal: What percentage of students successfully balance high study and low social media?
+-- only 7% meet the criteria
+
+WITH cte AS (
+    SELECT
+        student_id,
+        PERCENT_RANK() OVER(ORDER BY social_media_hours) AS social_media_usage,
+        PERCENT_RANK() OVER(ORDER BY study_hours_per_week) AS percent_study_hour,
+        PERCENT_RANK() OVER(ORDER BY attention_span_minutes) AS percentile_attention_span,
+        attention_span_minutes,
+        study_hours_per_week,
+        social_media_hours
+    FROM students
+)
 SELECT
- COUNT(CASE WHEN s.social_media_hours < 2 AND s.study_hours_per_week > 10 THEN 1 END) * 100/
- COUNT(*)
- AS 'Gold_Standard_Attention_PCT',
- ROUND(AVG(s.attention_span_minutes),2) AS 'global_avg_attention_span',
- ROUND(AVG(CASE WHEN s.social_media_hours < 2 AND s.study_hours_per_week > 10 THEN s.attention_span_minutes END),2)
+ (SUM(CASE WHEN social_media_usage < 0.25 AND percent_study_hour > 0.75 THEN 1 ELSE 0 END) * 100)/
+ COUNT(student_id) AS 'Gold_Standard_Attention_PCT_in_Students',
+ ROUND(AVG((SELECT attention_span_minutes FROM cte WHERE percentile_attention_span BETWEEN 0.2 AND 0.8 )),2)
+    AS 'trimmed_mean_attention_span',
+ ROUND(AVG(CASE WHEN social_media_usage < 0.25 AND percent_study_hour > 0.75 THEN attention_span_minutes END),2)
  AS "golden_standard_avg_attention_span"
-FROM students s
+FROM cte
 ;
