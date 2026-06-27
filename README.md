@@ -1,4 +1,4 @@
-# Relational Data Analysis: Student Digital Behavior & Psychological Metrics
+# Relational Data Analysis: Student Digital Wellbeing Behavior
 
 ## Project Overview
 This repository contains a deep-dive SQL data analysis exploring how digital lifestyle variables—specifically screen time, social media immersion, short-form video consumption, and ad engagement—impact student productivity, academic standing, and mental wellbeing. 
@@ -42,6 +42,21 @@ The analysis was driven by 9 core behavioral and structural research questions:
 ### 3. Behavioral Spending vs. Socioeconomic Backgrounds
 * **Goal:** Is ad click-through frequency a more aggressive driver of online spending and impulse buying than family income bracket?
 * **Finding:** While high-income students spend the most cash in absolute numbers, **ad engagement dictates the impulse score**. A low-income student with high ad engagement demonstrates an impulse score (`6.71`) virtually identical to a high-income counterpart (`6.79`), proving marketing vulnerability spans all economic tiers.
+```
++---------------+---------------+------------------------+--------------------------------+-------------------+
+| family_income | ad_engagement | avg_ads_click_per_week | avg_digital_spending_per_month | avg_impulse_score |
++---------------+---------------+------------------------+--------------------------------+-------------------+
+| High          | High          | 135.47                 | 118.48                         | 6.79              |
+| Middle        | High          | 134.49                 | 74.92                          | 6.76              |
+| Low           | High          | 132.41                 | 42.23                          | 6.71              |
+| High          | Moderate      | 95.74                  | 96.38                          | 5.4               |
+| Middle        | Moderate      | 95.58                  | 61.85                          | 5.4               |
+| Low           | Moderate      | 95.11                  | 35.73                          | 5.36              |
+| High          | Low           | 62.57                  | 79.38                          | 4.34              |
+| Middle        | Low           | 61.91                  | 51.54                          | 4.32              |
+| Low           | Low           | 60.56                  | 30.58                          | 4.27              |
++---------------+---------------+------------------------+--------------------------------+-------------------+
+```
 
 ### 4. Macro Infrastructure & Country-Level Performance ROI
 * **Goal:** Analyze student performance and regional productivity thresholds against global variations in internet infrastructure capabilities.
