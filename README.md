@@ -73,18 +73,18 @@ The analysis was driven by 9 core behavioral and structural research questions:
 * **Goal:** Determine if device restrictions (Shared Devices, Smartphones, Laptops) amplify behavioral vulnerabilities and downregulate academic performance.
 * **Finding:** Device profiles show consistent variance across isolated risk segments. Users bound strictly to laptops or combinations of devices ("Both") reveal marginal increases in their average brain rot metrics when slipping into high-risk behavior pools, while shared device users maintain slightly lower baseline scores.
 ```
-+---------------+-----------------+---------------+-----------------+
-| device_access | Risk_assessment | avg_brain_rot | avg_productiviy |
-+---------------+-----------------+---------------+-----------------+
-| Shared Device | Low             | 17.53         | 8.96            |
-| Smartphone    | Low             | 18.3          | 8.9             |
-| Laptop        | Low             | 19.3          | 8.84            |
-| Both          | Low             | 19.88         | 8.82            |
-| Shared Device | high            | 32.06         | 7.08            |
-| Smartphone    | high            | 32.83         | 6.93            |
-| Laptop        | high            | 33.67         | 6.9             |
-| Both          | high            | 33.92         | 6.85            |
-+---------------+-----------------+---------------+-----------------+
++---------------+--------------------------+---------------+-----------------+
+| device_access | academic_risk_assessment | avg_brain_rot | avg_productiviy |
++---------------+--------------------------+---------------+-----------------+
+| Shared Device | Low                      | 17.53         | 8.96            |
+| Smartphone    | Low                      | 18.3          | 8.9             |
+| Laptop        | Low                      | 19.3          | 8.84            |
+| Both          | Low                      | 19.88         | 8.82            |
+| Shared Device | high                     | 32.06         | 7.08            |
+| Smartphone    | high                     | 32.83         | 6.93            |
+| Laptop        | high                     | 33.67         | 6.9             |
+| Both          | high                     | 33.92         | 6.85            |
++---------------+--------------------------+---------------+-----------------+
 ```
 
 ### 9. The Digital Addiction Recovery Benchmark ("Gold Standard")
