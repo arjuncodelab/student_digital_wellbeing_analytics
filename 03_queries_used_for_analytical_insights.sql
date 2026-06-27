@@ -6,18 +6,20 @@ WITH q AS (
     student_id,
     internet_access_hours,
     wellbeing_index,
+    social_media_hours,
     PERCENT_RANK() OVER(ORDER BY internet_access_hours) AS 'percentile_rank'
     FROM students
+    ORDER BY student_id
 )
 SELECT
  CASE
-  WHEN percentile_rank <= 0.25 THEN 'Low'
-  WHEN percentile_rank <= 0.50 THEN 'Mid'
-  WHEN percentile_rank <= 0.75 THEN 'High'
-  WHEN percentile_rank <= 1.0 THEN 'Max'
+  WHEN percentile_rank <= 0.33 THEN 'Low'
+  WHEN percentile_rank <= 0.66 THEN 'Mid'
+  ELSE 'High'
   END as 'Quartile',
   ROUND(AVG(internet_access_hours),2) as avg_internet_access_hour,
-  ROUND(AVG(wellbeing_index),2) AS avg_wellbeing
+  ROUND(AVG(wellbeing_index),2) AS avg_wellbeing,
+  ROUND(AVG(social_media_hours),2) AS avg_social_media_use
   FROM q
   GROUP BY Quartile
   ORDER BY avg_internet_access_hour DESC, avg_wellbeing DESC
@@ -29,6 +31,7 @@ WITH students_filtered AS (
   SELECT student_id,
   PERCENT_RANK() OVER(ORDER BY brain_rot_index) as quantile
   FROM students
+  ORDER BY student_id
 )
 SELECT
   CASE
@@ -53,6 +56,7 @@ WITH average_cte AS (
     student_id,
     PERCENT_RANK() OVER (ORDER BY ads_clicked_per_week) as percentile
     FROM students
+    ORDER BY student_id
 )
 SELECT
  f.family_income,
@@ -79,6 +83,7 @@ WITH percentile_academic_motivation AS (
       country_id,
       PERCENT_RANK() OVER (ORDER BY academic_motivation) as percentile_academic_motivation
     FROM students
+    ORDER BY student_id
 ),
 percentile_internet_infra AS(
     SELECT
@@ -87,6 +92,7 @@ percentile_internet_infra AS(
         PERCENT_RANK() OVER(ORDER BY internet_infrastructure_index) AS percentile_internet_infra,
         internet_infrastructure_index
     FROM countries
+    ORDER BY country_id
 )
 SELECT
     pc.country,
@@ -111,6 +117,7 @@ WITH percentile_productivity_score AS (
       country_id,
       PERCENT_RANK() OVER (ORDER BY productivity_score) as percentile_productivity_score
     FROM students
+    ORDER BY student_id
 ),
 percentile_internet_infra AS(
     SELECT
@@ -119,6 +126,7 @@ percentile_internet_infra AS(
         PERCENT_RANK() OVER(ORDER BY internet_infrastructure_index) AS percentile_internet_infra,
         internet_infrastructure_index
     FROM countries
+    ORDER BY country_id
 )
 SELECT
     pc.country,
@@ -157,6 +165,7 @@ WITH CTE AS (
         PERCENT_RANK() OVER(ORDER BY class_attendance_rate) AS 'percentile_attendance',
         PERCENT_RANK() OVER(ORDER BY anxiety_score) AS 'percentile_anxiety_score'
     FROM students
+    ORDER BY student_id
 )
 SELECT
     CASE
@@ -201,6 +210,7 @@ WITH cte AS (
     PERCENT_RANK() OVER(ORDER BY s.academic_risk_score) AS percentile_academic_risk,
     PERCENT_RANK() OVER(ORDER BY s.productivity_score) AS percentile_productivity_score
     FROM students s
+    ORDER BY student_id
 )
 SELECT d.device_access,
  CASE
@@ -232,6 +242,7 @@ WITH cte AS (
         study_hours_per_week,
         social_media_hours
     FROM students
+    ORDER BY student_id
 )
 SELECT
  (SUM(CASE WHEN social_media_usage < 0.25 AND percent_study_hour > 0.75 THEN 1 ELSE 0 END) * 100)/
