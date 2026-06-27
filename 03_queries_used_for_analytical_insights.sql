@@ -1,4 +1,3 @@
-
 -- Q1 Wellbeing Tipping point
 -- Goal: Identify if there is a 'cliff' where internet usage destroys wellbeing.
 WITH q AS (
@@ -16,12 +15,12 @@ SELECT
   WHEN percentile_rank <= 0.33 THEN 'Low'
   WHEN percentile_rank <= 0.66 THEN 'Mid'
   ELSE 'High'
-  END as 'Quartile',
+  END as 'Tertile',
   ROUND(AVG(internet_access_hours),2) as avg_internet_access_hour,
   ROUND(AVG(wellbeing_index),2) AS avg_wellbeing,
   ROUND(AVG(social_media_hours),2) AS avg_social_media_use
   FROM q
-  GROUP BY Quartile
+  GROUP BY Tertile
   ORDER BY avg_internet_access_hour DESC, avg_wellbeing DESC
 ;
 
@@ -39,10 +38,12 @@ SELECT
     WHEN s.quantile < 0.66 AND s.quantile >= 0.33 THEN 'Moderate_brain_rot'
     ELSE "Low_brain_rot"
   END AS brain_rot_group,
-  ROUND(AVG(st.productivity_score),2) AS avg_productivity,
+  ROUND(AVG(st.class_attendance_rate),2) as class_attendance_rate,
   ROUND(AVG(st.brain_rot_index), 2) as avg_brain_rot,
+  ROUND(AVG(st.productivity_score),2) AS avg_productivity,
   MAX(st.brain_rot_index) as max_brain_rot,
-  MIN(st.brain_rot_index) as min_brain_rot
+  MIN(st.brain_rot_index) as min_brain_rot,
+  ROUND(AVG(st.attention_span_minutes), 2) AS avg_attention_span_minutes
 FROM students_filtered s
 JOIN students st ON s.student_id = st.student_id
 GROUP BY brain_rot_group
@@ -97,16 +98,16 @@ percentile_internet_infra AS(
 SELECT
     pc.country,
     pc.internet_infrastructure_index,
-    SUM(CASE WHEN pa.percentile_academic_motivation >= 0.66
-         THEN 1 ELSE 0 END) AS High_perform_students,
-    SUM(CASE WHEN pa.percentile_academic_motivation >= 0.33 AND pa.percentile_academic_motivation < 0.66
-         THEN 1 ELSE 0 END) AS Moderate_perform_students,
-    SUM(CASE WHEN pa.percentile_academic_motivation < 0.33
-         THEN 1 ELSE 0 END) AS Low_perform_students
+    ROUND(AVG(CASE WHEN pa.percentile_academic_motivation >= 0.66
+         THEN 1 ELSE 0 END) * 100 ,2) AS High_perform_students_pct,
+    ROUND(AVG(CASE WHEN pa.percentile_academic_motivation >= 0.33 AND pa.percentile_academic_motivation < 0.66
+         THEN 1 ELSE 0 END) * 100 ,2) AS Moderate_perform_students_pct,
+    ROUND(AVG(CASE WHEN pa.percentile_academic_motivation < 0.33
+         THEN 1 ELSE 0 END) * 100, 2) AS Low_perform_students_pct
 FROM percentile_academic_motivation pa
 JOIN percentile_internet_infra pc ON pa.country_id = pc.country_id
 GROUP BY pc.country, pc.internet_infrastructure_index
-ORDER BY High_perform_students DESC, Moderate_perform_students DESC, Low_perform_students DESC;
+ORDER BY High_perform_students_pct DESC, Moderate_perform_students_pct DESC, Low_perform_students_pct DESC;
 
 
 -- Yes better infrastructure lead to Not just better academic performance but better productivity too
@@ -131,16 +132,16 @@ percentile_internet_infra AS(
 SELECT
     pc.country,
     pc.internet_infrastructure_index,
-    SUM(CASE WHEN pa.percentile_productivity_score >= 0.66
-         THEN 1 ELSE 0 END) AS High_productivity_score,
-    SUM(CASE WHEN pa.percentile_productivity_score >= 0.33 AND pa.percentile_productivity_score < 0.66
-         THEN 1 ELSE 0 END) AS Moderate_productivity_score,
-    SUM(CASE WHEN pa.percentile_productivity_score < 0.33
-         THEN 1 ELSE 0 END) AS Low_productivity_score
+    ROUND(AVG(CASE WHEN pa.percentile_productivity_score >= 0.66
+         THEN 1 ELSE 0 END) * 100, 2) AS High_productivity_score_pct,
+    ROUND(AVG(CASE WHEN pa.percentile_productivity_score >= 0.33 AND pa.percentile_productivity_score < 0.66
+         THEN 1 ELSE 0 END) * 100, 2) AS Moderate_productivity_score_pct,
+    ROUND(AVG(CASE WHEN pa.percentile_productivity_score < 0.33
+         THEN 1 ELSE 0 END) *100, 2) AS Low_productivity_score_pct
 FROM percentile_productivity_score pa
 JOIN percentile_internet_infra pc ON pa.country_id = pc.country_id
 GROUP BY pc.country, pc.internet_infrastructure_index
-ORDER BY High_productivity_score DESC, Moderate_productivity_score DESC, Low_productivity_score DESC;
+ORDER BY High_productivity_score_pct DESC, Moderate_productivity_score_pct DESC, Low_productivity_score_pct DESC;
 
 
 
@@ -150,8 +151,7 @@ SELECT
  sf.field_of_study,
  ROUND(SUM(s.short_video_hours) / NULLIF(SUM(s.internet_access_hours),0), 2) as 'doom_scorll'
  FROM students s
- JOIN study_field sf
- WHERE sf.field_of_study != 'NA'
+ JOIN study_field sf ON s.study_field_id = sf.study_field_id
  GROUP BY sf.field_of_study
  ORDER BY doom_scorll DESC;
 
@@ -218,13 +218,13 @@ SELECT d.device_access,
     WHEN c.percentile_academic_risk <= 0.66 AND c.percentile_academic_risk > 0.33
         THEN 'Moderate'
     ELSE 'Low'
-    END AS Risk_assessment,
+    END AS academic_risk_assessment,
  ROUND(AVG(s.brain_rot_index), 2) as avg_brain_rot,
  ROUND(AVG(s.productivity_score), 2) as avg_productiviy
 FROM students s
 JOIN device_access d ON s.device_id = d.device_id
 JOIN cte c ON s.student_id = c.student_id
-GROUP BY d.device_access, Risk_assessment
+GROUP BY d.device_access, academic_risk_assessment
 ORDER BY avg_productiviy DESC;
 
 
@@ -246,10 +246,10 @@ WITH cte AS (
 )
 SELECT
  (SUM(CASE WHEN social_media_usage < 0.25 AND percent_study_hour > 0.75 THEN 1 ELSE 0 END) * 100)/
- COUNT(student_id) AS 'Gold_Standard_Attention_PCT_in_Students',
+ COUNT(student_id) AS Gold_Standard_Attention_PCT_in_Students,
  ROUND(AVG((SELECT attention_span_minutes FROM cte WHERE percentile_attention_span BETWEEN 0.2 AND 0.8 )),2)
-    AS 'trimmed_mean_attention_span',
+    AS trimmed_mean_attention_span,
  ROUND(AVG(CASE WHEN social_media_usage < 0.25 AND percent_study_hour > 0.75 THEN attention_span_minutes END),2)
- AS "golden_standard_avg_attention_span"
+ AS golden_standard_avg_attention_span
 FROM cte
 ;
