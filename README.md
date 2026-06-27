@@ -29,9 +29,9 @@ Beyond 6.7 hours (7 h aprox), students experience a 10-point wellbeing decline f
 **Insight**: Students with above-average brain rot scores show a 12% productivity decline: (Lower = Better)
   - With Lower Brain Rot **9.22** out of 60 :- Have Productivity of **9.57** Out of 10.
   - With Moderate Brain Rot **18.14** out of 60 :- Have Productivity **8.29** Out of 10.
-  - With Higher Brain Rot **29.80** out of 60:- Have Productivity of **7.94
+  - With Higher Brain Rot **29.80** out of 60:- Have Productivity of **7.94** Out of 10.
 
-Students in the high brain rot group score up to Max of 59 out of 60, indicating severe digital addiction patterns. Even among high-attendance students (>80%), this cognitive deterioration remains consistent, suggesting brain rot is independent of effort and attendance—it's about quality of focus, not quantity of time spent.
+Students in the high brain rot group score up to Max of 59 and Min of 22.47 out of 60, indicating severe digital addiction patterns. Even among high-attendance students (>80%), this cognitive deterioration remains consistent, suggesting brain rot is independent of effort and attendance—it's about quality of focus, not quantity of time spent.
 
 - **Behavioral Spending & Ad Engagement** | _Goal_: Is ad clicking a stronger driver of spending than family income?
 
