@@ -4,6 +4,11 @@
 This repository contains a deep-dive SQL data analysis exploring how digital lifestyle variables—specifically screen time, social media immersion, short-form video consumption, and ad engagement—impact student productivity, academic standing, and mental wellbeing. 
 
 Using advanced SQL techniques including window functions (`PERCENT_RANK`), complex multi-table joins, and conditional case aggregations, this project queries a normalized relational database containing **360,183 student profiles** to map modern behavioral trends.
+---
+### Schema Designe
+<img width="992" height="540" alt="Screenshot from 2026-07-17 16-46-41" src="https://github.com/user-attachments/assets/fdfccecd-be32-4b7e-83ce-efda3a31144f" />
+
+
 
 ---
 
