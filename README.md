@@ -1,11 +1,11 @@
-# Relational Data Analysis: Student Digital Wellbeing Behavior
+# Data Analysis (SQL and Python): Student Digital Well-being Behavior/
 
 ## Project Overview
-This repository contains a deep-dive SQL data analysis exploring how digital lifestyle variables—specifically screen time, social media immersion, short-form video consumption, and ad engagement—impact student productivity, academic standing, and mental wellbeing. 
+This repository contains a deep-dive SQL data analysis and data visualization and statistical analysis using python and exploring how digital lifestyle variables—specifically screen time, social media immersion, short-form video consumption, and ad engagement—impact student productivity, academic standing, and mental well-being. Also there financial risk, impulse purchase and digital spending behavior, 
 
 Using advanced SQL techniques including window functions (`PERCENT_RANK`), complex multi-table joins, and conditional case aggregations, this project queries a normalized relational database containing **360,183 student profiles** to map modern behavioral trends.
 ---
-### Schema Designe
+### Schema Design
 <img width="992" height="540" alt="Screenshot from 2026-07-17 16-46-41" src="https://github.com/user-attachments/assets/fdfccecd-be32-4b7e-83ce-efda3a31144f" />
 
 
@@ -16,9 +16,9 @@ Using advanced SQL techniques including window functions (`PERCENT_RANK`), compl
 
 The analysis was driven by 9 core behavioral and structural research questions:
 
-### 1. The Internet Wellbeing Tipping Point
-* **Goal:** Determine if an increasing volume of internet access correlates with a clear degradation of personal wellbeing.
-* **Finding:** A distinct inverse relationship exists. Students in the highest tertile of internet use spend double the time on social media and experience a notable drop in their average wellbeing scores compared to low-use students.
+### 1. The Internet Well-being Tipping Point
+* **Goal:** Determine if an increasing volume of internet access correlates with a clear degradation of personal well-being.
+* **Finding:** A distinct inverse relationship exists. Students in the highest tertile of internet use spend double the time on social media and experience a notable drop in their average well-being scores compared to low-use students.
 
 ```
 +----------+--------------------------+---------------+----------------------+
@@ -29,6 +29,12 @@ The analysis was driven by 9 core behavioral and structural research questions:
 | Low      | 3.26                     | 62.36         | 2.38                 |
 +----------+--------------------------+---------------+----------------------+
 ```
+* **Data visualization (via python)**
+<img width="813" height="432" alt="image" src="https://github.com/user-attachments/assets/caf303d7-78ac-4e1d-bbe9-6b4fdf81771a" />
+
+* **Statistical Analysis:** Conduct ANOVA Test
+  <img width="919" height="358" alt="Screenshot from 2026-08-04 18-39-07" src="https://github.com/user-attachments/assets/ffad7653-0ea1-4d71-b601-17a435305bb5" />
+
 
 ### 2. The "Brain Rot" Productivity Tax
 * **Goal:** Quantify the toll that elevated digital consumer indexes have on classroom presence, focus window, and individual efficiency.
@@ -43,6 +49,8 @@ The analysis was driven by 9 core behavioral and structural research questions:
 | High_brain_rot     | 88.28                 | 29.08         | 7.94             | 50.4                       |
 +--------------------+-----------------------+---------------+------------------+----------------------------+
 ```
+<img width="686" height="547" alt="image" src="https://github.com/user-attachments/assets/472a902f-1f77-41ce-a2ee-3838578f3aca" />
+
 
 ### 3. Behavioral Spending vs. Socioeconomic Backgrounds
 * **Goal:** Is ad click-through frequency a more aggressive driver of online spending and impulse buying than family income bracket?
@@ -125,3 +133,5 @@ To facilitate high-speed querying across the multi-table joins required for this
 
 <img width="1305" height="1035" alt="image" src="https://github.com/user-attachments/assets/467d7cba-df1f-4d71-9b84-ebca1d0ffe54" />
 
+---
+<img width="830" height="433" alt="image" src="https://github.com/user-attachments/assets/f3a27b72-701c-4790-93bb-c1d953073b7e" />
