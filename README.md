@@ -30,7 +30,7 @@ The analysis was driven by 9 core behavioral and structural research questions:
 +----------+--------------------------+---------------+----------------------+
 ```
 * **Data visualization (via python)**
-<img width="813" height="432" alt="image" src="https://github.com/user-attachments/assets/caf303d7-78ac-4e1d-bbe9-6b4fdf81771a" />
+ <img width="813" height="432" alt="image" src="https://github.com/user-attachments/assets/caf303d7-78ac-4e1d-bbe9-6b4fdf81771a" />
 
 * **Statistical Analysis:** Conduct ANOVA Test
   <img width="919" height="358" alt="Screenshot from 2026-08-04 18-39-07" src="https://github.com/user-attachments/assets/ffad7653-0ea1-4d71-b601-17a435305bb5" />
