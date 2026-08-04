@@ -9,7 +9,6 @@ Using advanced SQL techniques including window functions (`PERCENT_RANK`), compl
 <img width="992" height="540" alt="Screenshot from 2026-07-17 16-46-41" src="https://github.com/user-attachments/assets/fdfccecd-be32-4b7e-83ce-efda3a31144f" />
 
 
-
 ---
 
 ## Core Hypotheses & SQL Query Findings
@@ -70,10 +69,16 @@ The analysis was driven by 9 core behavioral and structural research questions:
 | Low           | Low           | 60.56                  | 30.58                          | 4.27              |
 +---------------+---------------+------------------------+--------------------------------+-------------------+
 ```
+* **Data visualization**
+<img width="1305" height="1035" alt="image" src="https://github.com/user-attachments/assets/467d7cba-df1f-4d71-9b84-ebca1d0ffe54" />
+
 
 ### 4. Macro Infrastructure & Country-Level Performance ROI
 * **Goal:** Analyze student performance and regional productivity thresholds against global variations in internet infrastructure capabilities.
 * **Finding:** Highly developed infrastructures (e.g., USA, UK, Canada) yield dense distributions of academically motivated students. Conversely, tracking peak workspace productivity metrics maps a heavily distributed student concentration across emerging and developing markets.
+* **Data visualization**
+ <img width="790" height="590" alt="image" src="https://github.com/user-attachments/assets/96c1509f-9325-4040-82f7-99b0008d6093" />
+
 
 ### 5. Short-Form Video Penetration ("Doom Scrolling") by Major
 * **Goal:** Uncover which fields of study are disproportionately consumed by short-form video ratios relative to their baseline connectivity.
@@ -92,17 +97,23 @@ The analysis was driven by 9 core behavioral and structural research questions:
 | Standard_Risk  | 18.21         | 4.86        | 0.95                 | 89.89                     |
 +----------------+---------------+-------------+----------------------+---------------------------+
 ```
+* **Data visualization**
+  <img width="830" height="455" alt="image" src="https://github.com/user-attachments/assets/d7117228-820a-4a1c-9458-19573799a5a7" />
 
-### 7. Economic Resilience & Geographic Development Tiers
-* **Goal:** Evaluate how macroeconomic development tiers affect fundamental student wellbeing metrics across matching internal income brackets.
-* **Finding:** Counterintuitively, average student wellbeing indexes scale higher as national macro-infrastructure complexity drops, with Underdeveloped nations maintaining higher baseline wellbeing metrics (`~60.7`) relative to Developed nations (`~53.8`), unaffected by localized household financial status.
+
+### 7. Impact of Internet Infrastructure on Education Level.
+* **Goal:** Evaluate how internet infrastructure influences educational attainment levels among students.
+* **Finding:** PhD student populations remain small and uniformly distributed across infrastructure levels. However, developed countries with superior internet infrastructure demonstrate significantly higher proportions of Graduate and Post-Graduate students. In contrast, weaker infrastructure corresponds to higher rates of Diploma-level students and dropouts, while overall student counts stay consistent worldwide.
+* **Data visualization**
+<img width="654" height="455" alt="image" src="https://github.com/user-attachments/assets/11c66541-3161-453b-a84f-5ff5fc625537" />
+
 
 ### 8. Hardware Access Disparity Matrix
-* **Goal:** Determine if device restrictions (Shared Devices, Smartphones, Laptops) amplify behavioral vulnerabilities and downregulate academic performance.
+* **Goal:** Determine if device restrictions (Shared Devices, Smartphones, Laptops) amplify behavioral vulnerabilities and down-regulate academic performance.
 * **Finding:** Device profiles show consistent variance across isolated risk segments. Users bound strictly to laptops or combinations of devices ("Both") reveal marginal increases in their average brain rot metrics when slipping into high-risk behavior pools, while shared device users maintain slightly lower baseline scores.
 ```
 +---------------+--------------------------+---------------+-----------------+
-| device_access | academic_risk_assessment | avg_brain_rot | avg_productiviy |
+| device_access | academic_risk_assessment | avg_brain_rot | avg_productivity|
 +---------------+--------------------------+---------------+-----------------+
 | Shared Device | Low                      | 17.53         | 8.96            |
 | Smartphone    | Low                      | 18.3          | 8.9             |
@@ -130,8 +141,3 @@ To facilitate high-speed querying across the multi-table joins required for this
 * **Performance Gain:** **99.9% query latency reduction**, transforming expensive sequential table scans into immediate index lookups.
 
 ---
-
-<img width="1305" height="1035" alt="image" src="https://github.com/user-attachments/assets/467d7cba-df1f-4d71-9b84-ebca1d0ffe54" />
-
----
-<img width="830" height="433" alt="image" src="https://github.com/user-attachments/assets/f3a27b72-701c-4790-93bb-c1d953073b7e" />
