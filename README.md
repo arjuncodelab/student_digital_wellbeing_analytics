@@ -72,6 +72,9 @@ The analysis was driven by 9 core behavioral and structural research questions:
 * **Data visualization**
 <img width="1305" height="1035" alt="image" src="https://github.com/user-attachments/assets/467d7cba-df1f-4d71-9b84-ebca1d0ffe54" />
 
+* **Statistical Analysis:**
+  <img width="919" height="358" alt="Screenshot from 2026-08-04 19-12-13" src="https://github.com/user-attachments/assets/b0de9c1f-55a1-480a-806a-7daf899f20ed" />
+
 
 ### 4. Macro Infrastructure & Country-Level Performance ROI
 * **Goal:** Analyze student performance and regional productivity thresholds against global variations in internet infrastructure capabilities.
