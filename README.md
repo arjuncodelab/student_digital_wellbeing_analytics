@@ -3,7 +3,7 @@
 ## Project Overview
 This repository contains a deep-dive SQL data analysis and data visualization and statistical analysis using python and exploring how digital lifestyle variables—specifically screen time, social media immersion, short-form video consumption, and ad engagement—impact student productivity, academic standing, and mental well-being. Also there financial risk, impulse purchase and digital spending behavior, 
 
-Using advanced SQL techniques including window functions (`PERCENT_RANK`), complex multi-table joins, and conditional case aggregations, this project queries a normalized relational database containing **360,183 student profiles** to map modern behavioral trends.
+Using advanced SQL techniques including window functions (`PERCENT_RANK`), complex multi-table joins, and conditional case aggregations, this project queries a normalized relational database containing **500K student profiles** to map modern behavioral trends.
 
 ---
 ### Schema Design
