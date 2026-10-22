@@ -139,7 +139,7 @@ The analysis was driven by 9 core behavioral and structural research questions:
 ## Database Optimization & Performance Profile
 To facilitate high-speed querying across the multi-table joins required for this analysis, B-Tree database indexes were integrated directly across primary relational constraints.
 
-* **Query Footprint:** 500K Records**.
+* **Query Footprint:** **500K Records**.
 * **Pre-Index Execution Time:** **0.70824 seconds**.
 * **Post-Index Execution Time:** **0.0011 seconds**.
 * **Performance Gain:** **99.9% query latency reduction**, transforming expensive sequential table scans into immediate index lookups.
