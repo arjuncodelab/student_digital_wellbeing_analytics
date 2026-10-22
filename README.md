@@ -1,4 +1,4 @@
-# Data Analysis (SQL and Python): Student Digital Well-being Behavior/
+# Data Analysis (SQL and Python): Student Digital Well-being Behavior
 
 ## Project Overview
 This repository contains a deep-dive SQL data analysis and data visualization and statistical analysis using python and exploring how digital lifestyle variables—specifically screen time, social media immersion, short-form video consumption, and ad engagement—impact student productivity, academic standing, and mental well-being. Also there financial risk, impulse purchase and digital spending behavior, 
